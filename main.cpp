@@ -1,5 +1,6 @@
 #include "ParticleExample.h"
 #include "SDL2/SDL.h"
+#include <iostream>
 
 int main(int, char* argv[])
 {
@@ -22,9 +23,11 @@ int main(int, char* argv[])
         SDL_PollEvent(&e);
         if (e.type == SDL_KEYUP)
         {
-            int s = (e.key.keysym.sym - SDLK_a + 1);
-            p->setStyle(ParticleExample::PatticleStyle(s));    // switch the example effects
+            ParticleExample::ParticleStyle s = ParticleExample::ParticleStyle(e.key.keysym.sym - SDLK_a + (int)(ParticleExample::ParticleStyle::BEGIN));
+            p->setStyle(s);    // switch the example effects
+            std::cout << ParticleExample::styleName(s) << std::endl;
         }
+
         if (e.type == SDL_QUIT)
         {
             break;

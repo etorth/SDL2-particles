@@ -8,10 +8,11 @@ public:
     ParticleExample() {}
     virtual ~ParticleExample() {}
 
-    enum PatticleStyle
+    enum ParticleStyle
     {
-        NONE,
-        FIRE,
+        NONE  = 0,
+        BEGIN = 1,
+        FIRE  = BEGIN,
         FIRE_WORK,
         SUN,
         GALAXY,
@@ -22,14 +23,33 @@ public:
         SMOKE,
         SNOW,
         RAIN,
+        END,
     };
 
-    PatticleStyle style_ = NONE;
-    void setStyle(PatticleStyle style);
+    ParticleStyle style_ = NONE;
+    void setStyle(ParticleStyle style);
     SDL_Texture* getDefaultTexture()
     {
         static SDL_Texture* t = IMG_LoadTexture(_renderer, "fire.png");
         //printf(SDL_GetError());
         return t;
+    }
+
+    static const char *styleName(ParticleStyle s)
+    {
+        switch(s){
+            case FIRE       : return "FIRE";
+            case FIRE_WORK  : return "FIRE_WORK";
+            case SUN        : return "SUN";
+            case GALAXY     : return "GALAXY";
+            case FLOWER     : return "FLOWER";
+            case METEOR     : return "METEOR";
+            case SPIRAL     : return "SPIRAL";
+            case EXPLOSION  : return "EXPLOSION";
+            case SMOKE      : return "SMOKE";
+            case SNOW       : return "SNOW";
+            case RAIN       : return "RAIN";
+            default         : return "???";
+        }
     }
 };

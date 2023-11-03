@@ -1,6 +1,6 @@
 #include "ParticleExample.h"
 
-void ParticleExample::setStyle(PatticleStyle style)
+void ParticleExample::setStyle(ParticleStyle style)
 {
     if (style_ == style)
     {
