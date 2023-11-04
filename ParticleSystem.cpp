@@ -66,11 +66,11 @@ ParticleSystem::ParticleSystem()
 
 bool ParticleSystem::initWithTotalParticles(int numberOfParticles)
 {
-    _totalParticles = numberOfParticles;
-    _isActive = true;
-    _emitterMode = Mode::GRAVITY;
-    _isAutoRemoveOnFinish = false;
-    _transformSystemDirty = false;
+    m_totalParticles = numberOfParticles;
+    m_isActive = true;
+    m_emitterMode = Mode::GRAVITY;
+    m_isAutoRemoveOnFinish = false;
+    m_transformSystemDirty = false;
 
     resetTotalParticles(numberOfParticles);
 
@@ -91,52 +91,52 @@ ParticleSystem::~ParticleSystem()
 
 void ParticleSystem::addParticles(int count)
 {
-    if (_paused)
+    if (m_paused)
     {
         return;
     }
     uint32_t RANDSEED = rand();
 
-    int start = _particleCount;
-    _particleCount += count;
+    int start = m_particleCount;
+    m_particleCount += count;
 
     //life
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        float theLife = _life + _lifeVar * RANDOM_M11(&RANDSEED);
+        float theLife = m_life + m_lifeVar * RANDOM_M11(&RANDSEED);
         particle_data_[i].timeToLive = (std::max)(0.0f, theLife);
     }
 
     //position
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].posx = _sourcePosition.x + _posVar.x * RANDOM_M11(&RANDSEED);
+        particle_data_[i].posx = m_sourcePosition.x + m_posVar.x * RANDOM_M11(&RANDSEED);
     }
 
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].posy = _sourcePosition.y + _posVar.y * RANDOM_M11(&RANDSEED);
+        particle_data_[i].posy = m_sourcePosition.y + m_posVar.y * RANDOM_M11(&RANDSEED);
     }
 
     //color
 #define SET_COLOR(c, b, v)                                                 \
-    for (int i = start; i < _particleCount; ++i)                           \
+    for (int i = start; i < m_particleCount; ++i)                           \
     {                                                                      \
         particle_data_[i].c = clampf(b + v * RANDOM_M11(&RANDSEED), 0, 1); \
     }
 
-    SET_COLOR(colorR, _startColor.r, _startColorVar.r);
-    SET_COLOR(colorG, _startColor.g, _startColorVar.g);
-    SET_COLOR(colorB, _startColor.b, _startColorVar.b);
-    SET_COLOR(colorA, _startColor.a, _startColorVar.a);
+    SET_COLOR(colorR, m_startColor.r, m_startColorVar.r);
+    SET_COLOR(colorG, m_startColor.g, m_startColorVar.g);
+    SET_COLOR(colorB, m_startColor.b, m_startColorVar.b);
+    SET_COLOR(colorA, m_startColor.a, m_startColorVar.a);
 
-    SET_COLOR(deltaColorR, _endColor.r, _endColorVar.r);
-    SET_COLOR(deltaColorG, _endColor.g, _endColorVar.g);
-    SET_COLOR(deltaColorB, _endColor.b, _endColorVar.b);
-    SET_COLOR(deltaColorA, _endColor.a, _endColorVar.a);
+    SET_COLOR(deltaColorR, m_endColor.r, m_endColorVar.r);
+    SET_COLOR(deltaColorG, m_endColor.g, m_endColorVar.g);
+    SET_COLOR(deltaColorB, m_endColor.b, m_endColorVar.b);
+    SET_COLOR(deltaColorA, m_endColor.a, m_endColorVar.a);
 
 #define SET_DELTA_COLOR(c, dc)                                                                              \
-    for (int i = start; i < _particleCount; ++i)                                                            \
+    for (int i = start; i < m_particleCount; ++i)                                                            \
     {                                                                                                       \
         particle_data_[i].dc = (particle_data_[i].dc - particle_data_[i].c) / particle_data_[i].timeToLive; \
     }
@@ -147,37 +147,37 @@ void ParticleSystem::addParticles(int count)
     SET_DELTA_COLOR(colorA, deltaColorA);
 
     //size
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].size = _startSize + _startSizeVar * RANDOM_M11(&RANDSEED);
+        particle_data_[i].size = m_startSize + m_startSizeVar * RANDOM_M11(&RANDSEED);
         particle_data_[i].size = (std::max)(0.0f, particle_data_[i].size);
     }
 
-    if (_endSize != START_SIZE_EQUAL_TO_END_SIZE)
+    if (m_endSize != START_SIZE_EQUAL_TO_END_SIZE)
     {
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
-            float endSize = _endSize + _endSizeVar * RANDOM_M11(&RANDSEED);
+            float endSize = m_endSize + m_endSizeVar * RANDOM_M11(&RANDSEED);
             endSize = (std::max)(0.0f, endSize);
             particle_data_[i].deltaSize = (endSize - particle_data_[i].size) / particle_data_[i].timeToLive;
         }
     }
     else
     {
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
             particle_data_[i].deltaSize = 0.0f;
         }
     }
 
     // rotation
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].rotation = _startSpin + _startSpinVar * RANDOM_M11(&RANDSEED);
+        particle_data_[i].rotation = m_startSpin + m_startSpinVar * RANDOM_M11(&RANDSEED);
     }
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
-        float endA = _endSpin + _endSpinVar * RANDOM_M11(&RANDSEED);
+        float endA = m_endSpin + m_endSpinVar * RANDOM_M11(&RANDSEED);
         particle_data_[i].deltaRotation = (endA - particle_data_[i].rotation) / particle_data_[i].timeToLive;
     }
 
@@ -186,27 +186,27 @@ void ParticleSystem::addParticles(int count)
     pos.x = m_x;
     pos.y = m_y;
 
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
         particle_data_[i].startPosX = pos.x;
     }
-    for (int i = start; i < _particleCount; ++i)
+    for (int i = start; i < m_particleCount; ++i)
     {
         particle_data_[i].startPosY = pos.y;
     }
 
     // Mode Gravity: A
-    if (_emitterMode == Mode::GRAVITY)
+    if (m_emitterMode == Mode::GRAVITY)
     {
 
         // radial accel
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
             particle_data_[i].modeA.radialAccel = modeA.radialAccel + modeA.radialAccelVar * RANDOM_M11(&RANDSEED);
         }
 
         // tangential accel
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
             particle_data_[i].modeA.tangentialAccel = modeA.tangentialAccel + modeA.tangentialAccelVar * RANDOM_M11(&RANDSEED);
         }
@@ -214,9 +214,9 @@ void ParticleSystem::addParticles(int count)
         // rotation is dir
         if (modeA.rotationIsDir)
         {
-            for (int i = start; i < _particleCount; ++i)
+            for (int i = start; i < m_particleCount; ++i)
             {
-                float a = Deg2Rad(_angle + _angleVar * RANDOM_M11(&RANDSEED));
+                float a = Deg2Rad(m_angle + m_angleVar * RANDOM_M11(&RANDSEED));
                 Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
@@ -227,9 +227,9 @@ void ParticleSystem::addParticles(int count)
         }
         else
         {
-            for (int i = start; i < _particleCount; ++i)
+            for (int i = start; i < m_particleCount; ++i)
             {
-                float a = Deg2Rad(_angle + _angleVar * RANDOM_M11(&RANDSEED));
+                float a = Deg2Rad(m_angle + m_angleVar * RANDOM_M11(&RANDSEED));
                 Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
@@ -242,31 +242,31 @@ void ParticleSystem::addParticles(int count)
     // Mode Radius: B
     else
     {
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
             particle_data_[i].modeB.radius = modeB.startRadius + modeB.startRadiusVar * RANDOM_M11(&RANDSEED);
         }
 
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeB.angle = Deg2Rad(_angle + _angleVar * RANDOM_M11(&RANDSEED));
+            particle_data_[i].modeB.angle = Deg2Rad(m_angle + m_angleVar * RANDOM_M11(&RANDSEED));
         }
 
-        for (int i = start; i < _particleCount; ++i)
+        for (int i = start; i < m_particleCount; ++i)
         {
             particle_data_[i].modeB.degreesPerSecond = Deg2Rad(modeB.rotatePerSecond + modeB.rotatePerSecondVar * RANDOM_M11(&RANDSEED));
         }
 
         if (modeB.endRadius == START_RADIUS_EQUAL_TO_END_RADIUS)
         {
-            for (int i = start; i < _particleCount; ++i)
+            for (int i = start; i < m_particleCount; ++i)
             {
                 particle_data_[i].modeB.deltaRadius = 0.0f;
             }
         }
         else
         {
-            for (int i = start; i < _particleCount; ++i)
+            for (int i = start; i < m_particleCount; ++i)
             {
                 float endRadius = modeB.endRadius + modeB.endRadiusVar * RANDOM_M11(&RANDSEED);
                 particle_data_[i].modeB.deltaRadius = (endRadius - particle_data_[i].modeB.radius) / particle_data_[i].timeToLive;
@@ -277,16 +277,16 @@ void ParticleSystem::addParticles(int count)
 
 void ParticleSystem::stopSystem()
 {
-    _isActive = false;
-    _elapsed = _duration;
-    _emitCounter = 0;
+    m_isActive = false;
+    m_elapsed = m_duration;
+    m_emitCounter = 0;
 }
 
 void ParticleSystem::resetSystem()
 {
-    _isActive = true;
-    _elapsed = 0;
-    for (int i = 0; i < _particleCount; ++i)
+    m_isActive = true;
+    m_elapsed = 0;
+    for (int i = 0; i < m_particleCount; ++i)
     {
         //particle_data_[i].timeToLive = 0.0f;
     }
@@ -294,67 +294,67 @@ void ParticleSystem::resetSystem()
 
 bool ParticleSystem::isFull()
 {
-    return (_particleCount == _totalParticles);
+    return (m_particleCount == m_totalParticles);
 }
 
 // ParticleSystem - MainLoop
 void ParticleSystem::update()
 {
     float dt = 1.0 / 25;
-    if (_isActive && _emissionRate)
+    if (m_isActive && m_emissionRate)
     {
-        float rate = 1.0f / _emissionRate;
-        int totalParticles = _totalParticles;
+        float rate = 1.0f / m_emissionRate;
+        int totalParticles = m_totalParticles;
 
         //issue #1201, prevent bursts of particles, due to too high emitCounter
-        if (_particleCount < totalParticles)
+        if (m_particleCount < totalParticles)
         {
-            _emitCounter += dt;
-            if (_emitCounter < 0.f)
+            m_emitCounter += dt;
+            if (m_emitCounter < 0.f)
             {
-                _emitCounter = 0.f;
+                m_emitCounter = 0.f;
             }
         }
 
-        int emitCount = (std::min)(1.0f * (totalParticles - _particleCount), _emitCounter / rate);
+        int emitCount = (std::min)(1.0f * (totalParticles - m_particleCount), m_emitCounter / rate);
         addParticles(emitCount);
-        _emitCounter -= rate * emitCount;
+        m_emitCounter -= rate * emitCount;
 
-        _elapsed += dt;
-        if (_elapsed < 0.f)
+        m_elapsed += dt;
+        if (m_elapsed < 0.f)
         {
-            _elapsed = 0.f;
+            m_elapsed = 0.f;
         }
-        if (_duration != DURATION_INFINITY && _duration < _elapsed)
+        if (m_duration != DURATION_INFINITY && m_duration < m_elapsed)
         {
             this->stopSystem();
         }
     }
 
-    for (int i = 0; i < _particleCount; ++i)
+    for (int i = 0; i < m_particleCount; ++i)
     {
         particle_data_[i].timeToLive -= dt;
     }
 
     // rebirth
-    for (int i = 0; i < _particleCount; ++i)
+    for (int i = 0; i < m_particleCount; ++i)
     {
         if (particle_data_[i].timeToLive <= 0.0f)
         {
-            int j = _particleCount - 1;
+            int j = m_particleCount - 1;
             //while (j > 0 && particle_data_[i].timeToLive <= 0)
             //{
-            //    _particleCount--;
+            //    m_particleCount--;
             //    j--;
             //}
-            particle_data_[i] = particle_data_[_particleCount - 1];
-            --_particleCount;
+            particle_data_[i] = particle_data_[m_particleCount - 1];
+            --m_particleCount;
         }
     }
 
-    if (_emitterMode == Mode::GRAVITY)
+    if (m_emitterMode == Mode::GRAVITY)
     {
-        for (int i = 0; i < _particleCount; ++i)
+        for (int i = 0; i < m_particleCount; ++i)
         {
             Pointf tmp, radial = { 0.0f, 0.0f }, tangential;
 
@@ -382,28 +382,28 @@ void ParticleSystem::update()
             particle_data_[i].modeA.dirY += tmp.y;
 
             // this is cocos2d-x v3.0
-            // if (_configName.length()>0 && _yCoordFlipped != -1)
+            // if (m_configName.length()>0 && m_yCoordFlipped != -1)
 
             // this is cocos2d-x v3.0
-            tmp.x = particle_data_[i].modeA.dirX * dt * _yCoordFlipped;
-            tmp.y = particle_data_[i].modeA.dirY * dt * _yCoordFlipped;
+            tmp.x = particle_data_[i].modeA.dirX * dt * m_yCoordFlipped;
+            tmp.y = particle_data_[i].modeA.dirY * dt * m_yCoordFlipped;
             particle_data_[i].posx += tmp.x;
             particle_data_[i].posy += tmp.y;
         }
     }
     else
     {
-        for (int i = 0; i < _particleCount; ++i)
+        for (int i = 0; i < m_particleCount; ++i)
         {
             particle_data_[i].modeB.angle += particle_data_[i].modeB.degreesPerSecond * dt;
             particle_data_[i].modeB.radius += particle_data_[i].modeB.deltaRadius * dt;
             particle_data_[i].posx = -cosf(particle_data_[i].modeB.angle) * particle_data_[i].modeB.radius;
-            particle_data_[i].posy = -sinf(particle_data_[i].modeB.angle) * particle_data_[i].modeB.radius * _yCoordFlipped;
+            particle_data_[i].posy = -sinf(particle_data_[i].modeB.angle) * particle_data_[i].modeB.radius * m_yCoordFlipped;
         }
     }
 
     //color, size, rotation
-    for (int i = 0; i < _particleCount; ++i)
+    for (int i = 0; i < m_particleCount; ++i)
     {
         particle_data_[i].colorR += particle_data_[i].deltaColorR * dt;
         particle_data_[i].colorG += particle_data_[i].deltaColorG * dt;
@@ -418,19 +418,19 @@ void ParticleSystem::update()
 // ParticleSystem - Texture protocol
 void ParticleSystem::setTexture(SDL_Texture* var)
 {
-    if (_texture != var)
+    if (m_texture != var)
     {
-        _texture = var;
+        m_texture = var;
     }
 }
 
 void ParticleSystem::draw()
 {
-    if (_texture == nullptr)
+    if (m_texture == nullptr)
     {
         return;
     }
-    for (int i = 0; i < _particleCount; i++)
+    for (int i = 0; i < m_particleCount; i++)
     {
         auto& p = particle_data_[i];
         if (p.size <=0 || p.colorA <= 0)
@@ -439,17 +439,17 @@ void ParticleSystem::draw()
         }
         SDL_Rect r = { int(p.posx + p.startPosX - p.size / 2), int(p.posy + p.startPosY - p.size / 2), int(p.size), int(p.size) };
         SDL_Color c = { Uint8(p.colorR * 255), Uint8(p.colorG * 255), Uint8(p.colorB * 255), Uint8(p.colorA * 255) };
-        SDL_SetTextureColorMod(_texture, c.r, c.g, c.b);
-        SDL_SetTextureAlphaMod(_texture, c.a);
-        SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
-        SDL_RenderCopyEx(_renderer, _texture, nullptr, &r, p.rotation, nullptr, SDL_FLIP_NONE);
+        SDL_SetTextureColorMod(m_texture, c.r, c.g, c.b);
+        SDL_SetTextureAlphaMod(m_texture, c.a);
+        SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
+        SDL_RenderCopyEx(m_renderer, m_texture, nullptr, &r, p.rotation, nullptr, SDL_FLIP_NONE);
     }
     update();
 }
 
 SDL_Texture* ParticleSystem::getTexture()
 {
-    return _texture;
+    return m_texture;
 }
 
 // ParticleSystem - Properties of Gravity Mode
@@ -599,65 +599,65 @@ float ParticleSystem::getRotatePerSecondVar() const
 
 bool ParticleSystem::isActive() const
 {
-    return _isActive;
+    return m_isActive;
 }
 
 int ParticleSystem::getTotalParticles() const
 {
-    return _totalParticles;
+    return m_totalParticles;
 }
 
 void ParticleSystem::setTotalParticles(int var)
 {
-    _totalParticles = var;
+    m_totalParticles = var;
 }
 
 bool ParticleSystem::isAutoRemoveOnFinish() const
 {
-    return _isAutoRemoveOnFinish;
+    return m_isAutoRemoveOnFinish;
 }
 
 void ParticleSystem::setAutoRemoveOnFinish(bool var)
 {
-    _isAutoRemoveOnFinish = var;
+    m_isAutoRemoveOnFinish = var;
 }
 
 ////don't use a transform matrix, this is faster
 //void ParticleSystem::setScale(float s)
 //{
-//    _transformSystemDirty = true;
+//    m_transformSystemDirty = true;
 //    Node::setScale(s);
 //}
 //
 //void ParticleSystem::setRotation(float newRotation)
 //{
-//    _transformSystemDirty = true;
+//    m_transformSystemDirty = true;
 //    Node::setRotation(newRotation);
 //}
 //
 //void ParticleSystem::setScaleX(float newScaleX)
 //{
-//    _transformSystemDirty = true;
+//    m_transformSystemDirty = true;
 //    Node::setScaleX(newScaleX);
 //}
 //
 //void ParticleSystem::setScaleY(float newScaleY)
 //{
-//    _transformSystemDirty = true;
+//    m_transformSystemDirty = true;
 //    Node::setScaleY(newScaleY);
 //}
 
 bool ParticleSystem::isPaused() const
 {
-    return _paused;
+    return m_paused;
 }
 
 void ParticleSystem::pauseEmissions()
 {
-    _paused = true;
+    m_paused = true;
 }
 
 void ParticleSystem::resumeEmissions()
 {
-    _paused = false;
+    m_paused = false;
 }
