@@ -26,7 +26,7 @@ public:
         END,
     };
 
-    ParticleStyle style_ = NONE;
+    ParticleStyle m_style = NONE;
     void setStyle(ParticleStyle style);
     SDL_Texture* getDefaultTexture()
     {

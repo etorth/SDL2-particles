@@ -79,9 +79,9 @@ bool ParticleSystem::initWithTotalParticles(int numberOfParticles)
 
 void ParticleSystem::resetTotalParticles(int numberOfParticles)
 {
-    if (particle_data_.size() < numberOfParticles)
+    if (m_particleData.size() < numberOfParticles)
     {
-        particle_data_.resize(numberOfParticles);
+        m_particleData.resize(numberOfParticles);
     }
 }
 
@@ -104,25 +104,25 @@ void ParticleSystem::addParticles(int count)
     for (int i = start; i < m_particleCount; ++i)
     {
         float theLife = m_life + m_lifeVar * RANDOM_M11(&RANDSEED);
-        particle_data_[i].timeToLive = (std::max)(0.0f, theLife);
+        m_particleData[i].timeToLive = (std::max)(0.0f, theLife);
     }
 
     //position
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].posx = m_sourcePosition.x + m_posVar.x * RANDOM_M11(&RANDSEED);
+        m_particleData[i].posx = m_sourcePosition.x + m_posVar.x * RANDOM_M11(&RANDSEED);
     }
 
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].posy = m_sourcePosition.y + m_posVar.y * RANDOM_M11(&RANDSEED);
+        m_particleData[i].posy = m_sourcePosition.y + m_posVar.y * RANDOM_M11(&RANDSEED);
     }
 
     //color
 #define SET_COLOR(c, b, v)                                                 \
     for (int i = start; i < m_particleCount; ++i)                           \
     {                                                                      \
-        particle_data_[i].c = clampf(b + v * RANDOM_M11(&RANDSEED), 0, 1); \
+        m_particleData[i].c = clampf(b + v * RANDOM_M11(&RANDSEED), 0, 1); \
     }
 
     SET_COLOR(colorR, m_startColor.r, m_startColorVar.r);
@@ -138,7 +138,7 @@ void ParticleSystem::addParticles(int count)
 #define SET_DELTA_COLOR(c, dc)                                                                              \
     for (int i = start; i < m_particleCount; ++i)                                                            \
     {                                                                                                       \
-        particle_data_[i].dc = (particle_data_[i].dc - particle_data_[i].c) / particle_data_[i].timeToLive; \
+        m_particleData[i].dc = (m_particleData[i].dc - m_particleData[i].c) / m_particleData[i].timeToLive; \
     }
 
     SET_DELTA_COLOR(colorR, deltaColorR);
@@ -149,8 +149,8 @@ void ParticleSystem::addParticles(int count)
     //size
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].size = m_startSize + m_startSizeVar * RANDOM_M11(&RANDSEED);
-        particle_data_[i].size = (std::max)(0.0f, particle_data_[i].size);
+        m_particleData[i].size = m_startSize + m_startSizeVar * RANDOM_M11(&RANDSEED);
+        m_particleData[i].size = (std::max)(0.0f, m_particleData[i].size);
     }
 
     if (m_endSize != START_SIZE_EQUAL_TO_END_SIZE)
@@ -159,26 +159,26 @@ void ParticleSystem::addParticles(int count)
         {
             float endSize = m_endSize + m_endSizeVar * RANDOM_M11(&RANDSEED);
             endSize = (std::max)(0.0f, endSize);
-            particle_data_[i].deltaSize = (endSize - particle_data_[i].size) / particle_data_[i].timeToLive;
+            m_particleData[i].deltaSize = (endSize - m_particleData[i].size) / m_particleData[i].timeToLive;
         }
     }
     else
     {
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].deltaSize = 0.0f;
+            m_particleData[i].deltaSize = 0.0f;
         }
     }
 
     // rotation
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].rotation = m_startSpin + m_startSpinVar * RANDOM_M11(&RANDSEED);
+        m_particleData[i].rotation = m_startSpin + m_startSpinVar * RANDOM_M11(&RANDSEED);
     }
     for (int i = start; i < m_particleCount; ++i)
     {
         float endA = m_endSpin + m_endSpinVar * RANDOM_M11(&RANDSEED);
-        particle_data_[i].deltaRotation = (endA - particle_data_[i].rotation) / particle_data_[i].timeToLive;
+        m_particleData[i].deltaRotation = (endA - m_particleData[i].rotation) / m_particleData[i].timeToLive;
     }
 
     // position
@@ -188,11 +188,11 @@ void ParticleSystem::addParticles(int count)
 
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].startPosX = pos.x;
+        m_particleData[i].startPosX = pos.x;
     }
     for (int i = start; i < m_particleCount; ++i)
     {
-        particle_data_[i].startPosY = pos.y;
+        m_particleData[i].startPosY = pos.y;
     }
 
     // Mode Gravity: A
@@ -202,13 +202,13 @@ void ParticleSystem::addParticles(int count)
         // radial accel
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeA.radialAccel = modeA.radialAccel + modeA.radialAccelVar * RANDOM_M11(&RANDSEED);
+            m_particleData[i].modeA.radialAccel = modeA.radialAccel + modeA.radialAccelVar * RANDOM_M11(&RANDSEED);
         }
 
         // tangential accel
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeA.tangentialAccel = modeA.tangentialAccel + modeA.tangentialAccelVar * RANDOM_M11(&RANDSEED);
+            m_particleData[i].modeA.tangentialAccel = modeA.tangentialAccel + modeA.tangentialAccelVar * RANDOM_M11(&RANDSEED);
         }
 
         // rotation is dir
@@ -220,9 +220,9 @@ void ParticleSystem::addParticles(int count)
                 Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
-                particle_data_[i].modeA.dirX = dir.x;    //v * s ;
-                particle_data_[i].modeA.dirY = dir.y;
-                particle_data_[i].rotation = -Rad2Deg(dir.getAngle());
+                m_particleData[i].modeA.dirX = dir.x;    //v * s ;
+                m_particleData[i].modeA.dirY = dir.y;
+                m_particleData[i].rotation = -Rad2Deg(dir.getAngle());
             }
         }
         else
@@ -233,8 +233,8 @@ void ParticleSystem::addParticles(int count)
                 Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
-                particle_data_[i].modeA.dirX = dir.x;    //v * s ;
-                particle_data_[i].modeA.dirY = dir.y;
+                m_particleData[i].modeA.dirX = dir.x;    //v * s ;
+                m_particleData[i].modeA.dirY = dir.y;
             }
         }
     }
@@ -244,24 +244,24 @@ void ParticleSystem::addParticles(int count)
     {
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeB.radius = modeB.startRadius + modeB.startRadiusVar * RANDOM_M11(&RANDSEED);
+            m_particleData[i].modeB.radius = modeB.startRadius + modeB.startRadiusVar * RANDOM_M11(&RANDSEED);
         }
 
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeB.angle = Deg2Rad(m_angle + m_angleVar * RANDOM_M11(&RANDSEED));
+            m_particleData[i].modeB.angle = Deg2Rad(m_angle + m_angleVar * RANDOM_M11(&RANDSEED));
         }
 
         for (int i = start; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeB.degreesPerSecond = Deg2Rad(modeB.rotatePerSecond + modeB.rotatePerSecondVar * RANDOM_M11(&RANDSEED));
+            m_particleData[i].modeB.degreesPerSecond = Deg2Rad(modeB.rotatePerSecond + modeB.rotatePerSecondVar * RANDOM_M11(&RANDSEED));
         }
 
         if (modeB.endRadius == START_RADIUS_EQUAL_TO_END_RADIUS)
         {
             for (int i = start; i < m_particleCount; ++i)
             {
-                particle_data_[i].modeB.deltaRadius = 0.0f;
+                m_particleData[i].modeB.deltaRadius = 0.0f;
             }
         }
         else
@@ -269,7 +269,7 @@ void ParticleSystem::addParticles(int count)
             for (int i = start; i < m_particleCount; ++i)
             {
                 float endRadius = modeB.endRadius + modeB.endRadiusVar * RANDOM_M11(&RANDSEED);
-                particle_data_[i].modeB.deltaRadius = (endRadius - particle_data_[i].modeB.radius) / particle_data_[i].timeToLive;
+                m_particleData[i].modeB.deltaRadius = (endRadius - m_particleData[i].modeB.radius) / m_particleData[i].timeToLive;
             }
         }
     }
@@ -288,7 +288,7 @@ void ParticleSystem::resetSystem()
     m_elapsed = 0;
     for (int i = 0; i < m_particleCount; ++i)
     {
-        //particle_data_[i].timeToLive = 0.0f;
+        //m_particleData[i].timeToLive = 0.0f;
     }
 }
 
@@ -333,21 +333,21 @@ void ParticleSystem::update()
 
     for (int i = 0; i < m_particleCount; ++i)
     {
-        particle_data_[i].timeToLive -= dt;
+        m_particleData[i].timeToLive -= dt;
     }
 
     // rebirth
     for (int i = 0; i < m_particleCount; ++i)
     {
-        if (particle_data_[i].timeToLive <= 0.0f)
+        if (m_particleData[i].timeToLive <= 0.0f)
         {
             int j = m_particleCount - 1;
-            //while (j > 0 && particle_data_[i].timeToLive <= 0)
+            //while (j > 0 && m_particleData[i].timeToLive <= 0)
             //{
             //    m_particleCount--;
             //    j--;
             //}
-            particle_data_[i] = particle_data_[m_particleCount - 1];
+            m_particleData[i] = m_particleData[m_particleCount - 1];
             --m_particleCount;
         }
     }
@@ -359,18 +359,18 @@ void ParticleSystem::update()
             Pointf tmp, radial = { 0.0f, 0.0f }, tangential;
 
             // radial acceleration
-            if (particle_data_[i].posx || particle_data_[i].posy)
+            if (m_particleData[i].posx || m_particleData[i].posy)
             {
-                normalize_point(particle_data_[i].posx, particle_data_[i].posy, &radial);
+                normalize_point(m_particleData[i].posx, m_particleData[i].posy, &radial);
             }
             tangential = radial;
-            radial.x *= particle_data_[i].modeA.radialAccel;
-            radial.y *= particle_data_[i].modeA.radialAccel;
+            radial.x *= m_particleData[i].modeA.radialAccel;
+            radial.y *= m_particleData[i].modeA.radialAccel;
 
             // tangential acceleration
             std::swap(tangential.x, tangential.y);
-            tangential.x *= -particle_data_[i].modeA.tangentialAccel;
-            tangential.y *= particle_data_[i].modeA.tangentialAccel;
+            tangential.x *= -m_particleData[i].modeA.tangentialAccel;
+            tangential.y *= m_particleData[i].modeA.tangentialAccel;
 
             // (gravity + radial + tangential) * dt
             tmp.x = radial.x + tangential.x + modeA.gravity.x;
@@ -378,40 +378,40 @@ void ParticleSystem::update()
             tmp.x *= dt;
             tmp.y *= dt;
 
-            particle_data_[i].modeA.dirX += tmp.x;
-            particle_data_[i].modeA.dirY += tmp.y;
+            m_particleData[i].modeA.dirX += tmp.x;
+            m_particleData[i].modeA.dirY += tmp.y;
 
             // this is cocos2d-x v3.0
             // if (m_configName.length()>0 && m_yCoordFlipped != -1)
 
             // this is cocos2d-x v3.0
-            tmp.x = particle_data_[i].modeA.dirX * dt * m_yCoordFlipped;
-            tmp.y = particle_data_[i].modeA.dirY * dt * m_yCoordFlipped;
-            particle_data_[i].posx += tmp.x;
-            particle_data_[i].posy += tmp.y;
+            tmp.x = m_particleData[i].modeA.dirX * dt * m_yCoordFlipped;
+            tmp.y = m_particleData[i].modeA.dirY * dt * m_yCoordFlipped;
+            m_particleData[i].posx += tmp.x;
+            m_particleData[i].posy += tmp.y;
         }
     }
     else
     {
         for (int i = 0; i < m_particleCount; ++i)
         {
-            particle_data_[i].modeB.angle += particle_data_[i].modeB.degreesPerSecond * dt;
-            particle_data_[i].modeB.radius += particle_data_[i].modeB.deltaRadius * dt;
-            particle_data_[i].posx = -cosf(particle_data_[i].modeB.angle) * particle_data_[i].modeB.radius;
-            particle_data_[i].posy = -sinf(particle_data_[i].modeB.angle) * particle_data_[i].modeB.radius * m_yCoordFlipped;
+            m_particleData[i].modeB.angle += m_particleData[i].modeB.degreesPerSecond * dt;
+            m_particleData[i].modeB.radius += m_particleData[i].modeB.deltaRadius * dt;
+            m_particleData[i].posx = -cosf(m_particleData[i].modeB.angle) * m_particleData[i].modeB.radius;
+            m_particleData[i].posy = -sinf(m_particleData[i].modeB.angle) * m_particleData[i].modeB.radius * m_yCoordFlipped;
         }
     }
 
     //color, size, rotation
     for (int i = 0; i < m_particleCount; ++i)
     {
-        particle_data_[i].colorR += particle_data_[i].deltaColorR * dt;
-        particle_data_[i].colorG += particle_data_[i].deltaColorG * dt;
-        particle_data_[i].colorB += particle_data_[i].deltaColorB * dt;
-        particle_data_[i].colorA += particle_data_[i].deltaColorA * dt;
-        particle_data_[i].size += (particle_data_[i].deltaSize * dt);
-        particle_data_[i].size = (std::max)(0.0f, particle_data_[i].size);
-        particle_data_[i].rotation += particle_data_[i].deltaRotation * dt;
+        m_particleData[i].colorR += m_particleData[i].deltaColorR * dt;
+        m_particleData[i].colorG += m_particleData[i].deltaColorG * dt;
+        m_particleData[i].colorB += m_particleData[i].deltaColorB * dt;
+        m_particleData[i].colorA += m_particleData[i].deltaColorA * dt;
+        m_particleData[i].size += (m_particleData[i].deltaSize * dt);
+        m_particleData[i].size = (std::max)(0.0f, m_particleData[i].size);
+        m_particleData[i].rotation += m_particleData[i].deltaRotation * dt;
     }
 }
 
@@ -432,7 +432,7 @@ void ParticleSystem::draw()
     }
     for (int i = 0; i < m_particleCount; i++)
     {
-        auto& p = particle_data_[i];
+        auto& p = m_particleData[i];
         if (p.size <=0 || p.colorA <= 0)
         {
             continue;

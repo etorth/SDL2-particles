@@ -658,7 +658,7 @@ protected:
     } modeB;
 
     //particle data
-    std::vector<ParticleData> particle_data_;
+    std::vector<ParticleData> m_particleData;
 
     //Emitter name
     std::string m_configName;

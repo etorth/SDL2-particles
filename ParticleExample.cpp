@@ -2,11 +2,11 @@
 
 void ParticleExample::setStyle(ParticleStyle style)
 {
-    if (style_ == style)
+    if (m_style == style)
     {
         return;
     }
-    style_ = style;
+    m_style = style;
     if (style == NONE)
     {
         stopSystem();
