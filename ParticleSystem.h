@@ -10,9 +10,9 @@ struct Pointf
 {
 public:
     Pointf() {}
-    Pointf(float _x, float _y)
-        : x(_x)
-        , y(_y)
+    Pointf(float argx, float argy)
+        : x(argx)
+        , y(argy)
     {
     }
     ~Pointf() {}
