@@ -619,7 +619,7 @@ void ParticleExample::setStyle(ParticleStyle style)
         _endColorVar.b = 0.0f;
         _endColorVar.a = 0.0f;
 
-        _posVar = { 1.0f * x_, 0.0f };
+        _posVar = { 1.0f * m_x, 0.0f };
         break;
     }
     case ParticleExample::RAIN:
@@ -680,7 +680,7 @@ void ParticleExample::setStyle(ParticleStyle style)
         _endColorVar.b = 0.0f;
         _endColorVar.a = 0.0f;
 
-        _posVar = { 1.0f * x_, 0.0f };
+        _posVar = { 1.0f * m_x, 0.0f };
         break;
     }
     default:

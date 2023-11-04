@@ -183,8 +183,8 @@ void ParticleSystem::addParticles(int count)
 
     // position
     Vec2 pos;
-    pos.x = x_;
-    pos.y = y_;
+    pos.x = m_x;
+    pos.y = m_y;
 
     for (int i = start; i < _particleCount; ++i)
     {

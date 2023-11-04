@@ -760,8 +760,8 @@ protected:
     bool _sourcePositionCompatible = false;
 
     SDL_Renderer* _renderer = nullptr;
-    int x_ = 0, y_ = 0;
+    int m_x = 0, m_y = 0;
 public:
     void setRenderer(SDL_Renderer* ren) { _renderer = ren; }
-    void setPosition(int x, int y) { x_ = x; y_ = y; }
+    void setPosition(int x, int y) { m_x = x; m_y = y; }
 };
