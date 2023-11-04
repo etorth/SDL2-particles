@@ -37,9 +37,8 @@ struct Color4F
     float r = 0, g = 0, b = 0, a = 0;
 };
 
-class ParticleData
+struct ParticleData
 {
-public:
     float posx = 0;
     float posy = 0;
     float startPosX = 0;
